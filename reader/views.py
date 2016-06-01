@@ -1,12 +1,25 @@
+from django.contrib.auth.models import User, Group
 from django.shortcuts import render
 from django.views import generic
 from reader.models import BooksIssued, Note, Highlight, BookMark, Book
+from reader.serializers import UserSerializer
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from login.models import ExtendedUser
 import sys, os, re
 import simplejson as json
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from reader.serializers import UserSerializer, BooksIssuedSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework import status
+from rest_framework import generics
 
 # Create your views here.
 
@@ -410,3 +423,119 @@ def checkLogin(request):
 	else:
 		url = reverse('reader:mylibrary', kwargs={'pk':user.id,'user_name':user.username})
 	return HttpResponseRedirect(url)
+
+class JSONResponse(HttpResponse):
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+		
+		
+"""
+REST API functions
+"""
+
+class UserList(generics.ListCreateAPIView):
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+	
+class BookIssuedList(generics.ListCreateAPIView):
+	queryset = BooksIssued.objects.all()
+	serializer_class = BooksIssuedSerializer
+
+
+@api_view(['GET'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))		
+@csrf_exempt
+def issuedBooks(request, pk, format=None):
+	if request.method == 'GET':
+		response_dict = {}
+		issuedBooksList = BooksIssued.objects.filter(user_id=pk)
+		if issuedBooksList:
+			response_dict["user"] = pk
+			response_dict["books"] = []
+			for books in issuedBooksList:
+				temp = {}
+				temp["id"] = books.book.id
+				temp["author"] = books.book.author
+				temp["isbn"] = books.book.isbn
+				temp["bookName"] = books.book.bookName
+				temp["bookEpub"] = str(books.book.bookEpub)
+				temp["coverImageUrl"] = str(books.book.coverImageUrl)
+				temp["pub_date"] =  books.book.pub_date.isoformat()
+				response_dict["books"].append(temp)
+		else:
+			response_dict["error"] = "Invalid User/Book Id provided"
+			return JSONResponse(json.dumps(response_dict), status=400)
+		return JSONResponse(json.dumps(response_dict))
+
+@api_view(['POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))		
+@csrf_exempt
+def issueBook(request, user, book, format=None):
+	if request.method == 'POST':
+		response = {}
+		try:
+			user = User.objects.get(pk=user)
+		except User.DoesNotExist:
+			response['error'] = 'User Id is invalid.'
+			return Response(json.dumps(response), status=status.HTTP_400_BAD_REQUEST)
+		
+		try:
+			bookToIssue = Book.objects.get(pk=book)
+		except Book.DoesNotExist:
+			response['error'] = 'Book Id is invalid.'
+			return Response(json.dumps(response), status=status.HTTP_400_BAD_REQUEST)
+		
+		if user and bookToIssue:
+			issuedBooks, created = BooksIssued.objects.get_or_create(user=user, book=bookToIssue)
+			if issuedBooks:
+				response['success'] = "Book already issued"
+			else:
+				response['success'] = "Book Issued Successfully"
+			return Response(json.dumps(response), status=status.HTTP_201_CREATED)
+		else:
+			return Response(json.dumps(response), status=status.HTTP_400_BAD_REQUEST)
+			
+@api_view(['DELETE'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))		
+@csrf_exempt
+def returnBook(request, user, book, format=None):
+	if request.method == 'DELETE':
+		response = {}
+		try:
+			user = User.objects.get(pk=user)
+		except User.DoesNotExist:
+			response['error'] = 'User Id is invalid.'
+			return Response(json.dumps(response), status=status.HTTP_400_BAD_REQUEST)
+		
+		try:
+			bookToIssue = Book.objects.get(pk=book)
+		except Book.DoesNotExist:
+			response['error'] = 'Book Id is invalid.'
+			return Response(json.dumps(response), status=status.HTTP_400_BAD_REQUEST)
+			
+		if user and bookToIssue:
+			issuedRecord = BooksIssued.objects.get(user=user, book=bookToIssue)
+			if issuedRecord:
+				issuedRecord.delete()
+				response['success'] = "Book Issued Successfully"
+				return Response(status=status.HTTP_204_NO_CONTENT)
+			else:
+				response['error'] = "The mentioned book is not issued by the user"
+				return Response(json.dumps(response), status=status.HTTP_400_BAD_REQUEST)
+			
+		else:
+			return Response(json.dumps(response), status=status.HTTP_400_BAD_REQUEST)
+			
+	

@@ -3,6 +3,7 @@ from login import views
 from reader import views
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
+from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     url(r'^$',views.checkLogin,name='checklogin'),
@@ -23,4 +24,12 @@ urlpatterns = [
     url(r'^userissuedbooks$',login_required(views.userIssuedBooks),name='userissuedbooks'),
     url(r'^termsofservice', TemplateView.as_view(template_name='termsofservice.html'), name='termsofservice'),
     url(r'^privacypolicy', TemplateView.as_view(template_name='privacypolicy.html'), name='privacypolicy'),
+    url(r'^user_list$',views.UserList.as_view(),name='userlist'),
+    url(r'^user_detail/(?P<pk>[0-9]+)$', views.UserDetail.as_view(), name='userdetail'),
+    url(r'^books_issued_list$',views.BookIssuedList.as_view(),name='booksissuedlist'),
+    url(r'^getuserissuedbooks/(?P<pk>[0-9]+)$', views.issuedBooks, name='getissuedbooks'),
+    url(r'^issuebook/(?P<user>[0-9]+)/(?P<book>[\w\-]+)$', views.issueBook, name='issuebook'),
+    url(r'^returnbook/(?P<user>[0-9]+)/(?P<book>[\w\-]+)$', views.returnBook, name='returnbook'),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)

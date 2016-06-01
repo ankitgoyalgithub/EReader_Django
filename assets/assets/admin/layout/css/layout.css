@@ -467,10 +467,6 @@ Page Header
 
 /* Allow expanded search for above 768px */
 @media (min-width: 768px) {
-  /* 768px */
-  .page-header.navbar {
-    /* Search box */
-  }
   .page-header.navbar .search-form.search-form-expanded {
     width: 200px;
   }
@@ -487,10 +483,6 @@ Page Header
 /***
 Horizontal Menu
 ***/
-.page-header.navbar {
-  /* Header container */
-  /* Mega menu */
-}
 .page-header.navbar .container {
   position: relative;
 }
@@ -624,9 +616,6 @@ Horizontal Menu
 @media (min-width: 992px) and (max-width: 1200px) {
   /* 992px 1200px */
   /* Boxed layout */
-  .page-boxed .page-header.navbar {
-    /* Top menu */
-  }
   .page-boxed .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle .username.username-hide-on-mobile {
     display: none;
   }
@@ -1298,9 +1287,6 @@ Page sidebar
     /* sidebar search expanded */
     /* sidebar bordered search expanded */
   }
-  .page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li {
-    /* hide opened sub menu */
-  }
   .page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li.open > .sub-menu,
   .page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > .sub-menu {
     display: none !important;
@@ -1444,10 +1430,6 @@ Page sidebar
   .page-sidebar-closed.page-sidebar-reversed .page-sidebar {
     margin-left: -45px;
     width: 45px;
-  }
-  .page-sidebar-closed.page-sidebar-reversed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed {
-    /* sidebar */
-    /* sidebar search */
   }
   .page-sidebar-closed.page-sidebar-reversed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > .sub-menu {
     left: auto;

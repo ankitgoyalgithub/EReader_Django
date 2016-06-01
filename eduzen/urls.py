@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 from . import settings
 from django.contrib.auth.decorators import login_required
 import django.views.defaults
+from rest_framework.authtoken import views
 
 from django.contrib import admin
 
@@ -13,6 +14,7 @@ urlpatterns = [
     url(r'^user/',include('login.urls',namespace="login")),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^getauthtoken/', views.obtain_auth_token),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
