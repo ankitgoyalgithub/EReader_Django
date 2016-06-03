@@ -473,7 +473,7 @@ def issuedBooks(request, pk, format=None):
 				temp["pub_date"] =  books.book.pub_date.isoformat()
 				response_dict["books"].append(temp)
 		else:
-			response_dict["error"] = "Invalid User/Book Id provided"
+			response_dict["error"] = "No Books Issued by the User or Invalid User/Book Id provided"
 			return JSONResponse(json.dumps(response_dict), status=400)
 		return JSONResponse(json.dumps(response_dict))
 
