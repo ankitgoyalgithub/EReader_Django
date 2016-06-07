@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^user/',include('login.urls',namespace="login")),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^getauthtoken/', views.obtain_auth_token),
+    url(r'^getauthtoken', views.obtain_auth_token),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
