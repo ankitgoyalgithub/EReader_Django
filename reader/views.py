@@ -12,7 +12,7 @@ import simplejson as json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from reader.serializers import UserSerializer, BooksIssuedSerializer
+from reader.serializers import UserSerializer, BooksIssuedSerializer, BookSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 from rest_framework.response import Response
@@ -537,5 +537,13 @@ def returnBook(request, user, book, format=None):
 			
 		else:
 			return Response(json.dumps(response), status=status.HTTP_400_BAD_REQUEST)
+
+class BookList(generics.ListCreateAPIView):
+	queryset = Book.objects.all()
+	serializer_class = BookSerializer
+
+class BookDetail(generics.RetrieveUpdateDestroyAPIView):
+	queryset = Book.objects.all()
+	serializer_class = BookSerializer
 			
 	

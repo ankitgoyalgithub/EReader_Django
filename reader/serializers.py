@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from reader.models import BooksIssued
+from reader.models import BooksIssued, Book
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,3 +25,8 @@ class BooksIssuedSerializer(serializers.ModelSerializer):
     class Meta:
         model = BooksIssued
         fields = ('id','user', 'book')
+
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ('id', 'bookName', 'isbn', 'author', 'bookEpub', 'coverImageUrl', 'pub_date')

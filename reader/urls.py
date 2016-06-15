@@ -30,6 +30,8 @@ urlpatterns = [
     url(r'^getuserissuedbooks/(?P<pk>[0-9]+)$', views.issuedBooks, name='getissuedbooks'),
     url(r'^issuebook/(?P<user>[0-9]+)/(?P<book>[\w\-]+)$', views.issueBook, name='issuebook'),
     url(r'^returnbook/(?P<user>[0-9]+)/(?P<book>[\w\-]+)$', views.returnBook, name='returnbook'),
+    url(r'^book_list$',views.BookList.as_view(),name='booklist'),
+    url(r'^book_detail/(?P<pk>[0-9]+)$', views.BookDetail.as_view(), name='bookdetail'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
