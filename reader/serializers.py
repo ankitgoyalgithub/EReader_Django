@@ -27,6 +27,14 @@ class BooksIssuedSerializer(serializers.ModelSerializer):
         fields = ('id','user', 'book')
 
 class BookSerializer(serializers.ModelSerializer):
+    bookEpub = serializers.SerializerMethodField('get_bookEpub')
+    coverImageUrl = serializers.SerializerMethodField('get_coverImageUrl')
     class Meta:
         model = Book
         fields = ('id', 'bookName', 'isbn', 'author', 'bookEpub', 'coverImageUrl', 'pub_date')
+
+    def get_bookEpub(self, obj):
+        return obj.bookEpub.replace('/home/ubuntu/EReader_Django','')
+
+    def get_coverImageUrl(self, obj):
+        return obj.coverImageUrl.replace('/home/ubuntu/EReader_Django','')
