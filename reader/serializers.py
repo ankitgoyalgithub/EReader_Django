@@ -1,9 +1,15 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from reader.models import BooksIssued, Book
+from login.models import ExtendedUser
 
+class ExtendedUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExtendedUser
+        fields = ('imageUrl', 'city', 'state', 'country', 'address')
 
 class UserSerializer(serializers.ModelSerializer):
+    extendedUser = ExtendedUserSerializer()
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'password')
