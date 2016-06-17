@@ -4,17 +4,23 @@ from reader.models import BooksIssued, Book
 from login.models import ExtendedUser
 
 class ExtendedUserSerializer(serializers.ModelSerializer):
+    imageUrl = serializers.SerializerMethodField()
     class Meta:
         model = ExtendedUser
         fields = ('imageUrl', 'city', 'state', 'country', 'address')
+    
+    def get_imageUrl(self, obj):
+        return 'http://52.77.237.94' + str(obj.imageUrl).replace('/home/ubuntu/EReader_Django','')
+
 
 class UserSerializer(serializers.ModelSerializer):
-    extendedUser = ExtendedUserSerializer()
+    extendeduser = ExtendedUserSerializer()
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password')
+        fields = ('username', 'email', 'first_name', 'last_name', 'password', 'extendeduser')
         
     def create(self, validated_data):
+        extendeduser_data = validated_data.pop('extendedUser')
         user = User(
             email=validated_data['email'],
             username=validated_data['username'],
