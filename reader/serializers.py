@@ -7,7 +7,7 @@ class ExtendedUserSerializer(serializers.ModelSerializer):
     imageUrl = serializers.SerializerMethodField()
     class Meta:
         model = ExtendedUser
-        fields = ('imageUrl', 'city', 'state', 'country', 'address')
+        fields = ('id','imageUrl', 'city', 'state', 'country', 'address')
     
     def get_imageUrl(self, obj):
         return 'http://52.77.237.94' + str(obj.imageUrl).replace('/home/ubuntu/EReader_Django','')
@@ -17,10 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
     extendeduser = ExtendedUserSerializer()
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password', 'extendeduser')
+        fields = ('id','username', 'email', 'first_name', 'last_name', 'password', 'extendeduser')
         
     def create(self, validated_data):
-        extendeduser_data = validated_data.pop('extendedUser')
+        print(validated_data)
+        extendeduser_data = validated_data.pop('extendeduser')
         user = User(
             email=validated_data['email'],
             username=validated_data['username'],
