@@ -468,14 +468,14 @@ def issuedBooks(request, pk, format=None):
 				temp["author"] = books.book.author
 				temp["isbn"] = books.book.isbn
 				temp["bookName"] = books.book.bookName
-				temp["bookEpub"] = str(books.book.bookEpub)
-				temp["coverImageUrl"] = str(books.book.coverImageUrl)
+				temp["bookEpub"] = "http://52.77.237.94"+str(books.book.bookEpub).replace('/home/ubuntu/EReader_Django','')
+				temp["coverImageUrl"] =  "http://52.77.237.94"+str(books.book.coverImageUrl).replace('/home/ubuntu/EReader_Django','')
 				temp["pub_date"] =  books.book.pub_date.isoformat()
 				response_dict["books"].append(temp)
 		else:
 			response_dict["error"] = "No Books Issued by the User or Invalid User/Book Id provided"
 			return JSONResponse(json.dumps(response_dict), status=400)
-		return JSONResponse(json.dumps(response_dict))
+		return JSONResponse(response_dict)
 
 @api_view(['POST'])
 @authentication_classes((TokenAuthentication,))
@@ -544,6 +544,4 @@ class BookList(generics.ListCreateAPIView):
 
 class BookDetail(generics.RetrieveUpdateDestroyAPIView):
 	queryset = Book.objects.all()
-	serializer_class = BookSerializer
-			
-	
+	serializer_class = BookSerializer	
